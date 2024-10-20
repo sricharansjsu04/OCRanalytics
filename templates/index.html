@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCR Analytics</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>OCR Analytics Page</h1>
+        <div class="step">
+            <h2>Step 1: Upload Image</h2>
+            <input type="file" id="imageInput">
+        </div>
+        <div class="step">
+            <h2>Step 2: Analyze Image</h2>
+            <button id="analyzeButton" class="btn-analyze">OCR Analyze</button>
+        </div>
+        <div class="step">
+            <h2>Step 3: OCR Output</h2>
+            <p id="outputText">OCR Categories Output</p>
+        </div>
+    </div>
+
+    <script>
+        let selectedFile;
+
+        document.getElementById('imageInput').addEventListener('change', function(event) {
+            selectedFile = event.target.files[0];
+        });
+
+        document.getElementById('analyzeButton').addEventListener('click', function() {
+            if (!selectedFile) {
+                alert("Please select an image first.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', selectedFile);
+
+            fetch('/analyze', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('outputText').textContent = data.text || "No text detected.";
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
